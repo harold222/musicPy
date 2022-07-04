@@ -1,3 +1,3 @@
 ﻿# Musicpy
 
-Es un proyecto para	obtener	musica de youtube sin tener	problemas con control de contenido el backend esta construido con Django y el frontend con react.
+It is a project to get music from youtube without having problems with content control, the backend is built with Django and the frontend with react.
