@@ -1,7 +1,6 @@
 import json
 
 from django.http import HttpResponse, Http404, JsonResponse, HttpResponseBadRequest, HttpResponseNotAllowed
-from django.views.decorators.csrf import csrf_exempt
 from pytube import YouTube, Search
 
 error = {
@@ -49,7 +48,6 @@ def search_music(request, term):
         return HttpResponseBadRequest(json.dumps(error), content_type="application/json")
 
 
-@csrf_exempt
 def download_music(request):
     try:
         if request.method != "POST":
