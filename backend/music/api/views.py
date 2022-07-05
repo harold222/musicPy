@@ -1,5 +1,5 @@
 import json
-
+from io import BytesIO
 from django.http import HttpResponse, Http404, JsonResponse, HttpResponseBadRequest, HttpResponseNotAllowed
 from pytube import YouTube, Search
 
@@ -57,12 +57,17 @@ def download_music(request):
         url = body.get('url')
 
         if str(url).strip() != '':
-            song = YouTube(str(url))
-            a = song
-        #     retornar cierta informacion de la cancion y intentar
-        #     url.streams.filter(abr='160kbps', progressive=False).first().download(output_path='C:/Users/harold.pedraza/Music', filename="a.mp3")
-        #     para subirla a un servicio de hosting con eso guardo las canciones ya buscadas y solo seria verificar que no
-        #     exista en ese drive para descargarla
+            song = YouTube(str(url)).streams.filter(abr='160kbps', progressive=False, only_audio=True).first()
+
+            buffer = BytesIO()
+            song.stream_to_buffer(buffer)
+            buffer.seek(0)
+
+            response = HttpResponse(buffer)
+            response['Content-Disposition'] = 'attachment; filename=song.mp3'
+            response['Content-Type'] = 'audio/wav'
+
+            return response
         else:
             return HttpResponseBadRequest("Send a url of song")
     except:
