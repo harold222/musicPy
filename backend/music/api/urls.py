@@ -6,9 +6,9 @@ urlpatterns = [
     # /music
     path('', views.index, name='index'),
     # /music/search_suggestion
-    path('search_suggestion/<term>/', views.search_suggestion, name='search_suggestion'),
+    path('search_suggestion', views.search_suggestion, name='search_suggestion'),
     # /music/search_music
-    path('search_music/<term>/', views.search_music, name='search_music'),
+    path('search_music', views.search_music, name='search_music'),
     # /music/download_music
     path('download_music', views.download_music, name='download_music'),
     # /music/download_playlist

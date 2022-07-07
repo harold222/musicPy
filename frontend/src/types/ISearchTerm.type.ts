@@ -1,3 +1,5 @@
-﻿export default interface ISarchTerm {
-    term: string;
+﻿import ISongsSuggestion from "./ISongsSuggestion";
+
+export default interface ISarchTerm {
+    results: ISongsSuggestion[]
 }

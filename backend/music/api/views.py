@@ -10,40 +10,51 @@ error = {
 
 
 def index(request):
-    return HttpResponse("api para musica desde youtube")
+    return HttpResponse("Get music from Youtube")
 
 
-def search_suggestion(request, term):
-    result = Search(term)
-    json_array = json.dumps({'suggestions': result.completion_suggestions})
-    return HttpResponse(json_array, content_type="application/json")
-
-
-def search_music(request, term):
+def search_suggestion(request):
     try:
         if request.method != "GET":
             return HttpResponseNotAllowed(['GET'])
 
-        result = Search(term)
-        object_results = {'results': [], 'total': len(result.results)}
+        result = Search(request.GET.get('term', ''))
+        json_array = json.dumps({'suggestions': result.completion_suggestions})
+        return HttpResponse(json_array, content_type="application/json")
+    except:
+        return HttpResponseBadRequest(json.dumps(error), content_type="application/json")
 
-        init = request.GET.get('init', 0)
-        limit = request.GET.get('limit', 10)
 
-        for idx, v in enumerate(result.results, start=init):
-            if idx < limit:
-                object_results['results'].append({
-                    'title': v.title,
-                    'url': v.watch_url,
-                    'thumbnail': v.thumbnail_url,
-                    'author': v.author,
-                    'channel': v.channel_url,
-                    'views': v.views
-                })
-            else:
-                break
+def search_music(request):
+    try:
+        if request.method != "GET":
+            return HttpResponseNotAllowed(['GET'])
 
-        return HttpResponse(json.dumps(object_results), content_type="application/json")
+        term = request.GET.get('term')
+
+        if term :
+            result = Search(term)
+            object_results = {'results': [], 'total': len(result.results)}
+
+            init = request.GET.get('init', 0)
+            limit = request.GET.get('limit', 10)
+
+            for idx, v in enumerate(result.results, start=init):
+                if idx < limit:
+                    object_results['results'].append({
+                        'title': v.title,
+                        'url': v.watch_url,
+                        'thumbnail': v.thumbnail_url,
+                        'author': v.author,
+                        'channel': v.channel_url,
+                        'views': v.views
+                    })
+                else:
+                    break
+
+            return HttpResponse(json.dumps(object_results), content_type="application/json")
+        else:
+            return HttpResponseBadRequest(json.dumps(error), content_type="application/json")
     except:
         return HttpResponseBadRequest(json.dumps(error), content_type="application/json")
 
