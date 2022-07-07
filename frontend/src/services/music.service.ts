@@ -1,9 +1,13 @@
 ﻿import http from '../http-common'
-import ISearchTerm from '../types/ISearchTerm.type'
+import ISearchSong from '../types/ISearchSong.type'
+import ISearchSuggestions from '../types/ISearchSuggestions.type';
 
 class MusicService {
-    search = (term: string) =>
-        http.get<ISearchTerm>(`/search_music?term=${term}`)
+    searchSuggestion = (term: string) => 
+        http.get<ISearchSuggestions>(`/search_suggestion?term=${term}`)
+
+    searchMusic = (term: string) =>
+        http.get<ISearchSong>(`/search_music?term=${term}`)
 }
 
 export default new MusicService();

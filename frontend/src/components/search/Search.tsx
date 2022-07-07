@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from "react";
+﻿import { useEffect, useState, MouseEvent } from "react";
 import { Loading } from "../shared/Loading"
 import MusicService from '../../services/music.service'
 import './Search.scss'
@@ -8,26 +8,26 @@ export const Search = () => {
 
     const [loading, setLoading] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
-    const [results, setResults] = useState<ISongsSuggestion[]>([]);
+    const [results, setResults] = useState<string[]>([]);
     const [notResults, setNotResults] = useState(false);
 
-    const changeTerm = (newTerm: string) => {
-        // const regex = /[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/gi;
-        // console.log('newTerm 1: ', newTerm);
-        // newTerm = newTerm.replace(regex, "")
-        // console.log('newTerm 2: ', newTerm);
-        // if (newTerm.trim()) {
-        //     setSearchTerm(newTerm)
-        // }
-        setSearchTerm(newTerm)
+    const clickResultItem = (option: string) => setSearchTerm(option)
+
+    const searchSong = (e: MouseEvent<HTMLButtonElement>) => {
+        const button = e?.currentTarget;
+        
+        if (button) {
+            button.disabled = true;
+            setResults([]);
+        }
     }
 
     useEffect(() => {
         const searchService = async (term: string) => {
             setLoading(true)
-            MusicService.search(term)
+            MusicService.searchSuggestion(term)
             .then(resp => {
-                resp.data && setResults(resp.data.results);
+                resp.data && setResults(resp.data.suggestions);
                 setLoading(false)
             })
             .catch((e: Error) => {
@@ -38,11 +38,15 @@ export const Search = () => {
         }
 
         const delayFn = setTimeout(() => {
-            if (searchTerm?.trim()) {
+            const term = searchTerm.trim()
+            if (term && term?.length > 2) {
                 setNotResults(false)
                 searchService(searchTerm.trim())
+            } else {
+                setResults([])
             }
         }, 350)
+
         return () => clearTimeout(delayFn)
     }, [searchTerm])
 
@@ -59,12 +63,33 @@ export const Search = () => {
                         Search music
                     </h4>
                     <hr />
-                    filtrar caracteres especiales
-                    <input type="text" autoComplete='off'
-                        className="search-input" placeholder='Enter your song...'
-                        onChange={(e) => changeTerm(e.target.value)}
-                        value={searchTerm}
-                    />
+
+                    <div className="search-container">
+                        <div className="search-content">
+                            <input type="text" autoComplete='off'
+                                className="search-input form-control" placeholder='Enter your song...'
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                value={searchTerm}
+                            />
+                            {
+                                results && 
+                                    <div className="search-results">
+                                        {
+                                            results.map((option, index) => (
+                                                <li key={index} className="search-results-item"
+                                                    onClick={() => clickResultItem(option)}>
+                                                    {option}
+                                                </li>
+                                            ))
+                                        }
+                                    </div>
+                            }
+                        </div>
+                        <button type="button" className="btn btn-outline-success"
+                            onClick={searchSong}>
+                            Buscar
+                        </button>
+                    </div>
 
                     {
                         notResults &&
