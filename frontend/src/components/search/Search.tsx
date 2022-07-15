@@ -14,11 +14,13 @@ export const Search = () => {
     const clickResultItem = (option: string) => setSearchTerm(option)
 
     const searchSong = (e: MouseEvent<HTMLButtonElement>) => {
-        const button = e?.currentTarget;
-        
-        if (button) {
-            button.disabled = true;
-            setResults([]);
+        if (searchTerm) {
+            const button = e?.currentTarget;
+    
+            if (button) {
+                button.disabled = true;
+                setResults([]);
+            }
         }
     }
 
@@ -33,11 +35,13 @@ export const Search = () => {
             .catch((e: Error) => {
                 setLoading(false)
                 console.log('error: ', e);
-                alert("An error has occurred, please reload the page.")
             })
         }
 
         const delayFn = setTimeout(() => {
+            const button = document.querySelector('#searchSong') as HTMLButtonElement | null;
+            if (button) button.disabled = false;
+            
             const term = searchTerm.trim()
             if (term && term?.length > 2) {
                 setNotResults(false)
@@ -86,7 +90,7 @@ export const Search = () => {
                             }
                         </div>
                         <button type="button" className="btn btn-outline-success"
-                            onClick={searchSong}>
+                            onClick={searchSong} id="searchSong">
                             Buscar
                         </button>
                     </div>
