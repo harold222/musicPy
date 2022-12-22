@@ -1,8 +1,9 @@
 ﻿import { useEffect, useState, MouseEvent } from "react";
 import { Loading } from "../shared/Loading"
 import MusicService from '../../services/music.service'
-import './Search.scss'
-import ISongsSuggestion from '../../types/ISongsSuggestion';
+import ISongsSuggestion from "../../types/ISongsSuggestion";
+import './Search.scss';
+import { ListSong } from '../list-song/ListSong';
 
 export const Search = () => {
 
@@ -10,16 +11,34 @@ export const Search = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [results, setResults] = useState<string[]>([]);
     const [notResults, setNotResults] = useState(false);
+    const [allResults, setAllResults] = useState<ISongsSuggestion[]>([]);
+    const [totalResults, setTotalResults] = useState<number | null>(null);
 
-    const clickResultItem = (option: string) => setSearchTerm(option)
+    const clickResultItem = (option: string) => {
+        const inputSearch = document.querySelector('#searchInput') as HTMLInputElement | null;
+        if (inputSearch) inputSearch.disabled = true;
+        setResults([]);
+        setSearchTerm(option);
+    }
 
-    const searchSong = (e: MouseEvent<HTMLButtonElement>) => {
+    const searchSong = async (e: MouseEvent<HTMLButtonElement>) => {
         if (searchTerm) {
             const button = e?.currentTarget;
     
             if (button) {
                 button.disabled = true;
-                setResults([]);
+                setLoading(true);
+                MusicService.searchMusic(searchTerm)
+                    .then(resp => {
+                        const { results, total } = resp.data;
+                        setAllResults(results);
+                        setTotalResults(total);
+                        setLoading(false);
+                    })
+                    .catch((e: Error) => {
+                        setLoading(false)
+                        console.log('error: ', e);
+                    });
             }
         }
     }
@@ -42,16 +61,19 @@ export const Search = () => {
             const button = document.querySelector('#searchSong') as HTMLButtonElement | null;
             if (button) button.disabled = false;
             
-            const term = searchTerm.trim()
-            if (term && term?.length > 2) {
-                setNotResults(false)
-                searchService(searchTerm.trim())
-            } else {
-                setResults([])
-            }
-        }, 350)
+            const inputSearch = document.querySelector('#searchInput') as HTMLInputElement | null;
 
-        return () => clearTimeout(delayFn)
+            if (!inputSearch?.disabled) {
+                const term = searchTerm.trim();
+                if (term && term?.length > 2) {
+                    setNotResults(false);
+                    searchService(searchTerm.trim());
+                } else
+                    setResults([]);
+            }
+        }, 450);
+
+        return () => clearTimeout(delayFn);
     }, [searchTerm])
 
     useEffect(() => {
@@ -74,6 +96,7 @@ export const Search = () => {
                                 className="search-input form-control" placeholder='Enter your song...'
                                 onChange={(e) => setSearchTerm(e.target.value)}
                                 value={searchTerm}
+                                id="searchInput"
                             />
                             {
                                 results && 
@@ -91,15 +114,22 @@ export const Search = () => {
                         </div>
                         <button type="button" className="btn btn-outline-success"
                             onClick={searchSong} id="searchSong">
-                            Buscar
+                            Search
                         </button>
                     </div>
 
                     {
                         notResults &&
                         <span className="badge rounded-pill text-bg-danger">
-                            No se encontraron resultados
+                            No results found
                         </span>
+                    }
+
+                    {
+                        (allResults?.length > 0) &&
+                        <div>
+                            <ListSong songs={allResults}/>
+                        </div>
                     }
 
                     {loading && <Loading/>}
