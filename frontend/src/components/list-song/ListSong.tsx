@@ -9,8 +9,6 @@ interface ListSongProps {
 
 export const ListSong: React.FC<ListSongProps> = ({ songs }) => {
 
-    // fetch(songs[0].thumbnail).then(resp => console.log(resp));
-
     return (
         <>
             {
