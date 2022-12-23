@@ -1,10 +1,51 @@
-﻿.list {
-    &-cover {
-        img {
-            
-        }
+﻿@import '../shared/Styles/variable';
+
+.list {
+    img {
+        width: 100%;
+        max-height: 300px;
+    }
+    &-content {
+        border-radius: 10px;
+        padding: 5px;
+        margin: 5px;
     }
     &-desc {
-
+        &-title {
+            text-decoration: none;
+            color: $secondary;
+            font-weight: bold;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+            transition: .3s ease-in;
+            &:hover{
+                color: $tertiary;
+            }
+        }
+        &-info {
+            padding: 0;
+            strong, span {
+                color: white;
+            }
+        }
+    }
+    &-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        &-views {
+            font-size: 12px;
+            margin-left: 5px;
+            font-weight: bold;
+        }
+    }
+    &-button {
+        display: flex;
+        justify-content: center;
+        &-action {
+            background: none;
+            border: navajowhite;
+            cursor: pointer;
+        }
     }
 }
