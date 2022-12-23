@@ -1,11 +1,9 @@
 ﻿import ISongsSuggestion from '../../types/ISongsSuggestion';
 import React from 'react';
-import ISearchSong from '../../types/ISearchSong.type';
-import { FaEye, FaPlay } from 'react-icons/fa';
-import { FiPlayCircle } from 'react-icons/fi'
+import { FaEye } from 'react-icons/fa';
+import { FiPlayCircle } from 'react-icons/fi';
 import './ListSong.scss';
-// import DefaultImage from '../../'
-
+import MusicService from '../../services/music.service';
 interface ListSongProps {
     songs: ISongsSuggestion[];
 }
@@ -13,7 +11,12 @@ interface ListSongProps {
 export const ListSong: React.FC<ListSongProps> = ({ songs }) => {
 
     const a = (urlSong: string) => {
-        console.log('es. ', import.meta.env)
+        MusicService.downloadMusic(urlSong)
+            .then(resp => {
+                console.log('resp');
+            }).catch(resp => {
+                console.error(resp);
+            })
     }
 
     return (
