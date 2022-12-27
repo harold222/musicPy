@@ -3,6 +3,6 @@
 export default axios.create({
   baseURL: import.meta.env.VITE_URL,
   headers: {
-    "Content-type": "application/json"
+    'Content-Type' : 'application/x-www-form-urlencoded'
   }, 
 });

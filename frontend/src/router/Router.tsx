@@ -1,5 +1,6 @@
 ﻿import { Navbar } from '../components/shared/Navbar';
 import { Search } from '../components/search';
+import { Player } from '../components/shared/Player/Player';
 import {
   BrowserRouter as Router,
   Routes,
@@ -16,6 +17,7 @@ export const AppRouter = () => {
                     <Route path="/search" element={<Search />}/>
                     <Route path="*" element={<Navigate replace to="/search" />} />
                 </Routes>
+                <Player/>
             </div>
         </Router>
     )

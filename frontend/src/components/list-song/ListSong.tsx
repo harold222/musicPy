@@ -4,6 +4,8 @@ import { FaEye } from 'react-icons/fa';
 import { FiPlayCircle } from 'react-icons/fi';
 import './ListSong.scss';
 import MusicService from '../../services/music.service';
+import { ShareDataService } from '../../services/shareData.service';
+
 interface ListSongProps {
     songs: ISongsSuggestion[];
 }
@@ -11,6 +13,7 @@ interface ListSongProps {
 export const ListSong: React.FC<ListSongProps> = ({ songs }) => {
 
     const a = (urlSong: string) => {
+        ShareDataService.setSubject(urlSong);
         MusicService.downloadMusic(urlSong)
             .then(resp => {
                 console.log('resp');

@@ -61,8 +61,8 @@ def search_music(request):
 
 def download_music(request):
     try:
-        if request.method != "POST":
-            return HttpResponseNotAllowed(['POST'])
+        #if request.method != "POST" and request.method != "OPTIONS":
+        #   return HttpResponseNotAllowed(['POST'])
 
         body = json.loads(request.body)
         url = body.get('url')
