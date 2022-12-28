@@ -10,7 +10,7 @@ class MusicService {
         http.get<ISearchSong>(`/search_music?term=${term}`);
 
     downloadMusic = (url: string) =>
-        http.post<any>(`/download_music`, { url })
+        http.post<any>(`/download_music`, { url }, { responseType: 'blob' });
 }
 
 export default new MusicService();

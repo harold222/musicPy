@@ -1,21 +1,23 @@
 ﻿import { useEffect } from 'react';
 import './Player.scss'
-import { ShareDataService } from '../../../services/shareData.service';
+import { StatePlayButton } from '../../../services/shareData.service';
 
 export const Player = () => {
 
-    const subscription$ = ShareDataService.getSubject();
+    const subscription$ = StatePlayButton.getSubject();
 
     useEffect(() => {
-        subscription$.subscribe(resp => {
-            console.log('es: ', resp)
+        const currentSub = subscription$.subscribe(resp => {
+
         })
-    })
+
+        return () => currentSub.unsubscribe();
+    }, [])
     
 
     return (
         <>
-    test
+            test
         </>
     );
 }

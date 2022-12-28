@@ -1,6 +1,7 @@
 ﻿import { Navbar } from '../components/shared/Navbar';
 import { Search } from '../components/search';
 import { Player } from '../components/shared/Player/Player';
+import { Test } from '../components/test/Test';
 import {
   BrowserRouter as Router,
   Routes,

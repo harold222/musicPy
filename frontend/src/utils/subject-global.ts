@@ -1,14 +1,14 @@
 ﻿import { Observable, Subject, map } from 'rxjs';
 
-export class SubjectGlobal {
+export class SubjectGlobal<T> {
 
-    private subject$ = new Subject<any>();
+    private subject$ = new Subject<T>();
 
-    public getSubject<T>(): Observable<T> {
-        return this.subject$.asObservable().pipe(map((r: T) => r));
+    public getSubject(): Observable<T> {
+        return this.subject$.asObservable();
     }
 
-    public setSubject(newValue: any): void {
+    public setSubject(newValue: T): void {
         this.subject$.next(newValue);
     }
 }
