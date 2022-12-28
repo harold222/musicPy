@@ -1,11 +1,15 @@
-﻿import { useEffect, useState, MouseEvent } from "react";
+﻿import { useEffect, useState, MouseEvent, useContext } from "react";
 import { Loading } from "../../components/shared/Loading"
 import MusicService from '../../services/music.service'
 import ISongsSuggestion from "../../types/ISongsSuggestion";
 import './Search.scss';
-import { ListSong } from './list-song/ListSong';
+import { ListSong } from './components/list-song/ListSong';
+import { SearchProvider, useSearchContext } from './context/Search.context';
 
 export const Search = () => {
+
+
+    // const [searchTerm, setSearchTerm] = useSearchContext();
 
     const [loading, setLoading] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
@@ -82,59 +86,61 @@ export const Search = () => {
     }, [results])
 
     return(
-        <div className="container mt-3">
-            <div className="row">
-                <div className="col">
-                    <h4 className="text-center">
-                        Search music
-                    </h4>
-                    <hr />
+        <SearchProvider>
+            <div className="container mt-3">
+                <div className="row">
+                    <div className="col">
+                        <h4 className="text-center">
+                            Search music
+                        </h4>
+                        <hr />
 
-                    <div className="search-container">
-                        <div className="search-content">
-                            <input type="text" autoComplete='off'
-                                className="search-input form-control" placeholder='Enter your song...'
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                value={searchTerm}
-                                id="searchInput"
-                            />
-                            {
-                                results && 
-                                    <div className="search-results">
-                                        {
-                                            results.map((option, index) => (
-                                                <li key={index} className="search-results-item"
-                                                    onClick={() => clickResultItem(option)}>
-                                                    {option}
-                                                </li>
-                                            ))
-                                        }
-                                    </div>
-                            }
+                        <div className="search-container">
+                            <div className="search-content">
+                                <input type="text" autoComplete='off'
+                                    className="search-input form-control" placeholder='Enter your song...'
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    value={searchTerm}
+                                    id="searchInput"
+                                />
+                                {
+                                    results && 
+                                        <div className="search-results">
+                                            {
+                                                results.map((option, index) => (
+                                                    <li key={index} className="search-results-item"
+                                                        onClick={() => clickResultItem(option)}>
+                                                        {option}
+                                                    </li>
+                                                ))
+                                            }
+                                        </div>
+                                }
+                            </div>
+                            <button type="button" className="btn btn-outline-success"
+                                onClick={searchSong} id="searchSong">
+                                Search
+                            </button>
                         </div>
-                        <button type="button" className="btn btn-outline-success"
-                            onClick={searchSong} id="searchSong">
-                            Search
-                        </button>
+
+                        {
+                            notResults &&
+                            <span className="badge rounded-pill text-bg-danger">
+                                No results found
+                            </span>
+                        }
+
+                        {
+                            (allResults?.length > 0) &&
+                            <div>
+                                <ListSong songs={allResults}/>
+                            </div>
+                        }
+
+                        {loading && <Loading/>}
                     </div>
-
-                    {
-                        notResults &&
-                        <span className="badge rounded-pill text-bg-danger">
-                            No results found
-                        </span>
-                    }
-
-                    {
-                        (allResults?.length > 0) &&
-                        <div>
-                            <ListSong songs={allResults}/>
-                        </div>
-                    }
-
-                    {loading && <Loading/>}
                 </div>
             </div>
-        </div>
+        </SearchProvider>
     )
 }

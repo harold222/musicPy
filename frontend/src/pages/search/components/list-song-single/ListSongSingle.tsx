@@ -1,7 +1,7 @@
-﻿import ISongsSuggestion from '../../../types/ISongsSuggestion';
+﻿import ISongsSuggestion from '../../../../types/ISongsSuggestion';
 import { FiPlayCircle, FiPauseCircle } from 'react-icons/fi';
 import { FaEye } from 'react-icons/fa';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 interface ListSongSingleProps {
     song: ISongsSuggestion;
