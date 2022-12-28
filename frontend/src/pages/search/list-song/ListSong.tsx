@@ -1,8 +1,8 @@
-﻿import ISongsSuggestion from '../../types/ISongsSuggestion';
+﻿import ISongsSuggestion from '../../../types/ISongsSuggestion';
 import React from 'react';
 import './ListSong.scss';
-import MusicService from '../../services/music.service';
-import { StatePlayButton } from '../../services/shareData.service';
+import MusicService from '../../../services/music.service';
+import { StatePlayButton } from '../../../services/shareData.service';
 import { useState, useEffect } from 'react';
 import { ListSongSingle } from '../list-song-single';
 

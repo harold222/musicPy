@@ -1,9 +1,9 @@
 ﻿import { useEffect, useState, MouseEvent } from "react";
-import { Loading } from "../shared/Loading"
+import { Loading } from "../../components/shared/Loading"
 import MusicService from '../../services/music.service'
 import ISongsSuggestion from "../../types/ISongsSuggestion";
 import './Search.scss';
-import { ListSong } from '../list-song/ListSong';
+import { ListSong } from './list-song/ListSong';
 
 export const Search = () => {
 
