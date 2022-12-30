@@ -1,0 +1,126 @@
+﻿import MusicService from '../../../../services/music.service';
+import { useSearchContext } from '../../context/Search.context';
+import './SongSearch.scss';
+import { useState, useEffect, MouseEvent } from 'react';
+import { ListSong } from '../list-song/ListSong';
+import { NotResults } from '../not-results/NotResults';
+
+export const SongSearch = () => {
+
+    const {
+        searchTerm, setSearchTerm,
+        setLoading,
+        setTotalResults,
+        setAllResults,
+        setNotResults
+    } = useSearchContext();
+
+    const [results, setResults] = useState<string[]>([]);
+
+    useEffect(() => {
+        const searchService = async (term: string) => {
+            setLoading(true);
+
+            MusicService.searchSuggestion(term)
+                .then(resp => {
+                    resp.data && setResults(resp.data.suggestions);
+                    setLoading(false)
+                })
+                .catch((e: Error) => {
+                    setLoading(false)
+                    console.log('error: ', e);
+                })
+        }
+
+        const delayFn = setTimeout(() => {
+            const button = document.querySelector('#searchSong') as HTMLButtonElement | null;
+            if (button) button.disabled = false;
+            
+            const inputSearch = document.querySelector('#searchInput') as HTMLInputElement | null;
+
+            if (!inputSearch?.disabled) {
+                const term = searchTerm.trim();
+                if (term && term?.length > 2) {
+                    setNotResults(false);
+                    searchService(searchTerm.trim());
+                } else
+                    setResults([]);
+            }
+        }, 450);
+
+        return () => clearTimeout(delayFn);
+    }, [searchTerm]);
+
+    useEffect(() => {
+        if (!results && searchTerm)
+            setNotResults(true)
+    }, [results]);
+
+    const clickResultItem = (option: string) => {
+        // USAR USEREF
+        const inputSearch = document.querySelector('#searchInput') as HTMLInputElement | null;
+        if (inputSearch) inputSearch.disabled = true;
+        setResults([]);
+        setSearchTerm(option);
+    }
+
+    const searchSong = async (e: MouseEvent<HTMLButtonElement>) => {
+        if (searchTerm) {
+            const button = e?.currentTarget;
+    
+            if (button) {
+                button.disabled = true;
+                setLoading(true);
+                MusicService.searchMusic(searchTerm)
+                    .then(resp => {
+                        const { results, total } = resp.data;
+                        setAllResults(results);
+                        setTotalResults(total);
+                        setLoading(false);
+                    })
+                    .catch((e: Error) => {
+                        setLoading(false)
+                        console.log('error: ', e);
+                    });
+            }
+        }
+    };
+
+    return(
+        <>
+            <div className="search-container">
+                <div className="search-content">
+                    <input type="text" autoComplete='off'
+                        className="search-input form-control" placeholder='Enter your song...'
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        value={searchTerm}
+                        id="searchInput"
+                    />
+
+                    {
+                        results && 
+                            <div className="search-results">
+                                {
+                                    results.map((option, index) => (
+                                        <li key={index} className="search-results-item"
+                                            onClick={() => {
+                                                clickResultItem(option)
+                                            }}>
+                                            {option}
+                                        </li>
+                                    ))
+                                }
+                            </div>
+                    }
+                </div>
+                <button type="button" className="btn btn-outline-success"
+                    onClick={searchSong} id="searchSong">
+                    Search
+                </button>
+            </div>
+
+            <NotResults/>
+            <ListSong/>
+        </>
+    );
+}

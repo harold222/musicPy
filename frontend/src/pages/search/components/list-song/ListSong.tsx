@@ -1,16 +1,15 @@
 ﻿import ISongsSuggestion from '../../../../types/ISongsSuggestion';
-import React from 'react';
 import './ListSong.scss';
 import MusicService from '../../../../services/music.service';
 import { StatePlayButton } from '../../../../services/shareData.service';
 import { useState, useEffect } from 'react';
 import { ListSongSingle } from '../list-song-single';
+import { useSearchContext } from '../../context/Search.context';
 
-interface ListSongProps {
-    songs: ISongsSuggestion[];
-}
 
-export const ListSong: React.FC<ListSongProps> = ({ songs }) => {
+export const ListSong = () => {
+
+    const { allResults } = useSearchContext();
 
     const [touchSong, setTouchSong] = useState<boolean>(false);
     const subscription$ = StatePlayButton.getSubject();
@@ -36,7 +35,7 @@ export const ListSong: React.FC<ListSongProps> = ({ songs }) => {
         <div className='container mt-4'>
             <div className="row row-cols-1 row-cols-md-3 g-4">
                 {
-                    songs.map((song, idx) =>
+                    allResults.map((song, idx) =>
                         <ListSongSingle key={idx} song={song} isTouch={touchSong} searchLink={searchLink}  />
                     )
                 }
