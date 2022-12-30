@@ -1,7 +1,7 @@
 ﻿import MusicService from '../../../../services/music.service';
 import { useSearchContext } from '../../context/Search.context';
 import './SongSearch.scss';
-import { useState, useEffect, MouseEvent } from 'react';
+import { useState, useEffect, MouseEvent, useRef } from 'react';
 import { ListSong } from '../list-song/ListSong';
 import { NotResults } from '../not-results/NotResults';
 
@@ -16,6 +16,8 @@ export const SongSearch = () => {
     } = useSearchContext();
 
     const [results, setResults] = useState<string[]>([]);
+    const inputSearch = useRef<HTMLInputElement>(null);
+    const button = useRef<HTMLButtonElement>(null);
 
     useEffect(() => {
         const searchService = async (term: string) => {
@@ -25,20 +27,19 @@ export const SongSearch = () => {
                 .then(resp => {
                     resp.data && setResults(resp.data.suggestions);
                     setLoading(false)
+                    setNotResults(false)
                 })
                 .catch((e: Error) => {
                     setLoading(false)
+                    setNotResults(true)
                     console.log('error: ', e);
                 })
         }
 
         const delayFn = setTimeout(() => {
-            const button = document.querySelector('#searchSong') as HTMLButtonElement | null;
-            if (button) button.disabled = false;
+            if (button?.current) button.current.disabled = false;
             
-            const inputSearch = document.querySelector('#searchInput') as HTMLInputElement | null;
-
-            if (!inputSearch?.disabled) {
+            if (!inputSearch.current?.disabled) {
                 const term = searchTerm.trim();
                 if (term && term?.length > 2) {
                     setNotResults(false);
@@ -57,11 +58,11 @@ export const SongSearch = () => {
     }, [results]);
 
     const clickResultItem = (option: string) => {
-        // USAR USEREF
-        const inputSearch = document.querySelector('#searchInput') as HTMLInputElement | null;
-        if (inputSearch) inputSearch.disabled = true;
-        setResults([]);
-        setSearchTerm(option);
+        if (inputSearch?.current) {
+            inputSearch.current.disabled = true;
+            setResults([]);
+            setSearchTerm(option);
+        }
     }
 
     const searchSong = async (e: MouseEvent<HTMLButtonElement>) => {
@@ -94,7 +95,7 @@ export const SongSearch = () => {
                         className="search-input form-control" placeholder='Enter your song...'
                         onChange={(e) => setSearchTerm(e.target.value)}
                         value={searchTerm}
-                        id="searchInput"
+                        ref={inputSearch}
                     />
 
                     {
@@ -114,7 +115,7 @@ export const SongSearch = () => {
                     }
                 </div>
                 <button type="button" className="btn btn-outline-success"
-                    onClick={searchSong} id="searchSong">
+                    onClick={searchSong} ref={button}>
                     Search
                 </button>
             </div>
