@@ -4,6 +4,7 @@ import './SongSearch.scss';
 import { useState, useEffect, MouseEvent, useRef } from 'react';
 import { ListSong } from '../list-song/ListSong';
 import { NotResults } from '../not-results/NotResults';
+import { useSearchMusic } from '../../../../components/customHooks/useSearchMusic';
 
 export const SongSearch = () => {
 
@@ -71,18 +72,8 @@ export const SongSearch = () => {
     
             if (button) {
                 button.disabled = true;
-                setLoading(true);
-                MusicService.searchMusic(searchTerm)
-                    .then(resp => {
-                        const { results, total } = resp.data;
-                        setAllResults(results);
-                        setTotalResults(total);
-                        setLoading(false);
-                    })
-                    .catch((e: Error) => {
-                        setLoading(false)
-                        console.log('error: ', e);
-                    });
+                const resp = useSearchMusic();
+                resp && setAllResults(resp);
             }
         }
     };

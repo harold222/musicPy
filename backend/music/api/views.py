@@ -64,8 +64,7 @@ def download_music(request):
         if request.method != "POST":
             return HttpResponseNotAllowed(['POST'])
 
-        body = json.loads(request.body)
-        url = body.get('url')
+        url = request.POST['url']
 
         if str(url).strip() != '':
             song = YouTube(str(url)).streams.filter(abr='160kbps', progressive=False, only_audio=True).first()
